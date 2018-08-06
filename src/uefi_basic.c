@@ -60,7 +60,7 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 		if(ub_isdigit(cbuf[0])){
 			mini_snprintf(linebuf,1000,"%s%s",linebuf,cbuf);
 		}
-		if(ub_strncmp(cbuf,"run\r\n",6) == 0 || ub_strncmp(cbuf,"RUN\r\n",6) == 0){
+		else if(ub_strncmp(cbuf,"run\r\n",6) == 0 || ub_strncmp(cbuf,"RUN\r\n",6) == 0){
 			ub_space(linebuf);
 			ubasic_init(linebuf);
 			do{
@@ -78,10 +78,10 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 			ub_memset(linebuf,0,1024);
 			eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 		}
+		else{
+			eST->ConOut->OutputString(eST->ConOut,L"Syntax error\r\n");
+		}
 		ub_memset(buf,0,512);
 	}
-	eST->ConOut->OutputString(eST->ConOut,L"something\r\n");
-	
-	eST->BootServices->WaitForEvent(1, &(eST->ConIn->WaitForKey), &Index);
 	return EFI_SUCCESS;
 }
