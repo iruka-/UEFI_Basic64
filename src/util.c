@@ -90,18 +90,10 @@ int ub_atoi(const char *s){
 	int j;
 	char t[15];
 	ub_memcpy(t,s,10);
-        //ub_printf("ub_atoi() called with arg: '%s'\r\n",t);
-	for(j=0;j<5;j++){
-		//ub_printf("ub_atoi() ..s[%d]:'%c'\r\n",j,s[j]);
-	}
-	for(j=0;j<100;j++){
-		//ub_printf("ub_atoi() s[%d]:'0x%x'\r\n",j,s[j]);
-	}
 	for(j=0;s[j]<='0';j++)
 		i=j;
 	for(i=j;s[i];i++)
         {
-		//ub_printf("ub_atoi() s:'%c' \r\n",s[i]);
                 if(s[i]==' ')
                         continue;
                 else if(s[i]=='-') sign=-1;
@@ -109,11 +101,9 @@ int ub_atoi(const char *s){
         } 
         for(;s[i] && s[i]>='0' && s[i]<='9';i++)
                 num=num*10 + s[i]-'0';
-        //ub_printf("ub_atoi() returning: %d\r\n",num*sign);
         return num*sign;
 }
 
-int ub_atoii(char *str);
 
 int ub_printf(char *fmt,...){
 	char buffer[1024];
@@ -139,10 +129,8 @@ int ub_putchar(int character){
 }
 
 unsigned int ub_strlen(const char *s){
-	//ub_printf("ub_strlen() called\r\n");
 	unsigned int len = 0;
 	while (s[len] != '\0') len++;
-	//ub_printf("ub_strlen()\r\n");
 	return len;
 }
 
