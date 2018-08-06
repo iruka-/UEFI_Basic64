@@ -14,7 +14,6 @@ build:
 
 	$(CC) $(CFLAGS) -c -o data.o ./gnu-efi/lib/data.c
 	$(CC) -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main -o BOOTX64.EFI mini-printf.o ubasic.o tokenizer.o uefi_basic.o util.o data.o -lgcc
-	#$(CC) -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main -o BOOTX64.EFI mini-printf.o uefi_basic.o data.o -lgcc
 iso:
 	mkisofs -o uefi_basic.iso --root /EFI/BOOT BOOTX64.EFI
 clean:

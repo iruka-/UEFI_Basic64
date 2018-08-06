@@ -1,7 +1,6 @@
 #include <efi.h>
 #include <efilib.h>
 #include "mini-printf/mini-printf.h"
-#include "newlib/mbstowcs.c"
 #include "util.h"
 #include "efitable.h"
 #include "ubasic/ubasic.h"
