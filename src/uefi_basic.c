@@ -68,15 +68,15 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 			}
 			while(!ubasic_finished());
 			ub_unspace(linebuf);
-			ub_printf("Ok\r\n");
+			eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 		}
 		else if(ub_strncmp(cbuf,"list\r\n",7) == 0 || ub_strncmp(cbuf,"LIST\r\n",7) == 0){
 			ub_printf("%s",linebuf);
-			ub_printf("Ok\r\n");
+			eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 		}
 		else if(ub_strncmp(cbuf,"new\r\n",6) == 0 || ub_strncmp(cbuf,"NEW\r\n",6) == 0){
 			ub_memset(linebuf,0,1024);
-			ub_printf("Ok\r\n");
+			eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 		}
 		ub_memset(buf,0,512);
 	}
