@@ -51,49 +51,17 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 	for(i=0;i<50;i++){
 		buf[i] = 0;
 	}
-	
 	eST->ConOut->OutputString(eST->ConOut,L"UEFI BASIC v0.1\r\n");
 	eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
-	/*begin tests*/
-	/*
-	eST->ConOut->OutputString(eST->ConOut,L"Testing ub_wstrcmp()\r\n");
-	if(ub_wstrcmp(L"HELLO",L"HELLO") == 0){
-		eST->ConOut->OutputString(eST->ConOut,L"ub_wstrcmp() ok\r\n");
-	}
-	
-	eST->ConOut->OutputString(eST->ConOut,L"Testing ub_printf()\r\n");
-	ub_printf("ub_printf() %s","ok\r\n");
-	
-	eST->ConOut->OutputString(eST->ConOut,L"Testing ub_putchar()\r\n");
-	ub_putchar('Z');*/
-	/*end tests*/
-
-	/*ubasic tests*/
-	//char *program ="10 gosub 70\x20\n20 for i = 1 to 10\x20\n30 print i\x20\n40 next i\x20\n50 print \"end\"\x20\n60 end\x20\n70 print \"subroutine\"\x20\n110 return\x20\n";
-	//char *program = "10 for i = 1 to 10\n20 print i\n30 next i";
-	//char *program = "10 x = 5\n20 if x = 5 goto 40\n30 print \"x isnt 5\"\n40 print \"x is 5\"";
-	/*ubasic_init(program);
- 	do {
- 		ubasic_run();
- 	} while(!ubasic_finished());*/
-	/*end ubasic tests*/
-
 	ub_memset(linebuf,0,1024);	
 	while(1){
 		ub_readline(eST,&bufptr);
 		ub_u2c(cbuf,buf,500);
-		//ub_space(cbuf);
-		//eST->ConOut->OutputString(eST->ConOut,L"buf:");
-		//eST->ConOut->OutputString(eST->ConOut,buf);
-		//ub_printf("cbuf: '%s'\r\n",cbuf);
 		if(ub_isdigit(cbuf[0])){
 			mini_snprintf(linebuf,1000,"%s%s",linebuf,cbuf);
-			//ub_printf("linebuf: '%s'\r\n",linebuf);
 		}
 		if(ub_strncmp(cbuf,"run\r\n",6) == 0 || ub_strncmp(cbuf,"RUN\r\n",6) == 0){
-			//ub_printf("run command\r\n");
 			ub_space(linebuf);
-			//ub_printf("spaced linebuf: '%s'\r\n",linebuf);
 			ubasic_init(linebuf);
 			do{
 				ubasic_run();
