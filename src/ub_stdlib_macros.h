@@ -4,7 +4,9 @@
 #include "util.h"
 void *ub_malloc(int);
 void ub_free(void*);
+#ifndef NULL
 #define NULL (void*)0
+#endif
 #define malloc ub_malloc
 #define free ub_free
 #define printf ub_printf

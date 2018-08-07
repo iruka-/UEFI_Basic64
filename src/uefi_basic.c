@@ -39,11 +39,9 @@ void ub_unspace(char *str){
 	}
 }	
 EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
-	UINTN Index;
 	CHAR16 buf[512];
 	CHAR16 *bufptr = &buf[0];
 	char cbuf[512];
-	char **cbufptr = &cbuf[0];
 	char linebuf[1024];
 	int i = 0;
 	gST = eST;

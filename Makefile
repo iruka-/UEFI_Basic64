@@ -1,6 +1,5 @@
 CC=x86_64-w64-mingw32-gcc
-CFLAGS=-ffreestanding -I./gnu-efi/inc -I./gnu-efi/inc/x86_64 -I./gnu-efi/inc/protocol -Wall -Wextra --std=c99 -pedantic
-ISO_FILE = uefi_basic.iso
+CFLAGS=-ffreestanding -I./gnu-efi/inc -I./gnu-efi/inc/x86_64 -I./gnu-efi/inc/protocol -Wall --std=c99 -pedantic
 all: build iso
 build:
 	$(CC) $(CFLAGS) -c -o mini-printf.o ./src/mini-printf/mini-printf.c

@@ -46,7 +46,7 @@ void *ub_memset (void *m, int c, int n){
   return m;
 }
 
-void *ub_memcpy (void *dst0, void *src0, int len0){
+void *ub_memcpy (void *dst0, const void *src0, int len0){
   char *dst = (char *) dst0;
   char *src = (char *) src0;
 
