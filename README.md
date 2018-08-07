@@ -1,5 +1,5 @@
 # UEFI Basic
-A simple BASIC language intepreter that runs on UEFI.
+A simple BASIC language intepreter that runs on UEFI. Feel free to submit a pull request.
 ## Requirements
 The gcc compiler for x64\_64 mingw platform (x86\_64-w64-mingw32-gcc).
 ## Compilation
