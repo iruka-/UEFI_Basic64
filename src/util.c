@@ -140,25 +140,40 @@ int ub_isdigit(char c){
 }
 
 void ub_readline(EFI_SYSTEM_TABLE *eST,CHAR16 **buf){
-	EFI_INPUT_KEY *key = NULL;
+	EFI_INPUT_KEY key;
 	UINTN Index;
 	CHAR16 *text = *buf;
-	int i = 0;
-	do{
-		eST->BootServices->WaitForEvent(1, &(eST->ConIn->WaitForKey), &Index);
-		eST->ConIn->ReadKeyStroke(eST->ConIn,key);
-		
-		eST->ConOut->OutputString(eST->ConOut,&(key->UnicodeChar));
-		if(key->UnicodeChar == L'\b'){
-			i -= 2;
-		}
-		else{
-			text[i] = key->UnicodeChar;
-		}
-		
-	}while(text[i++] != 0xD);
-	text[i] = 0xA;
-	eST->ConOut->OutputString(eST->ConOut,L"\n");
+	int Len = 0;
+	while(1){
+	  eST->BootServices->WaitForEvent(1, &(eST->ConIn->WaitForKey), &Index);
+          eST->ConIn->ReadKeyStroke(eST->ConIn,&key);
+          if (key.UnicodeChar == '\n' || key.UnicodeChar == '\r') {
+            break;
+          }
+        
+          if (key.UnicodeChar == '\b') {
+            if (Len) {
+                eST->ConOut->OutputString(eST->ConOut, L"\b \b");
+                Len -= 1;
+            }
+            continue;
+          }
+
+         if (key.UnicodeChar >= '\x20') {
+            text[Len] = key.UnicodeChar;
+
+            text[Len+1] = 0;
+            eST->ConOut->OutputString(eST->ConOut, &text[Len]);
+
+            Len += 1;
+            
+            continue;
+         }
+    }
+    eST->ConOut->OutputString(eST->ConOut,L"\r\n");
+    text[Len] = L'\r';
+    text[Len+1] = L'\n';
+    text[Len+2] = 0;
 }
 
 void ub_pause(){
