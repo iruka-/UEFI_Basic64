@@ -1,3 +1,6 @@
 *.EFI
 *.iso
 *.o
+Makefile.*
+*.elf
+*.a
