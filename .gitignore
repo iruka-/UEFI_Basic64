@@ -4,3 +4,5 @@
 Makefile.*
 *.elf
 *.a
+*.efi
+arm
