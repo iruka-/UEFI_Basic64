@@ -61,13 +61,13 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 			char cur_digit[8];
 			replace_flag = 0;
 			len = ub_strlen(linebuf);
-			digit = ub_atoi(cbuf); //
+			digit = ub_atoi(cbuf);
 			//ub_printf("digit: %d\r\n",digit);
 			mini_snprintf(digit_str,5,"%d",digit);
 			//ub_printf("digit_str: %s\r\n",digit_str);
 			if(len > 2 && ub_isdigit(linebuf[0])){
 				int cur_digit = ub_atoi(linebuf);
-				ub_printf("linebuf[0] isdigit\r\n");
+				//ub_printf("linebuf[0] isdigit\r\n");
 				if(cur_digit == digit){
 					replace_flag = 1;
 					int orig_line_len, growlen;
@@ -89,36 +89,35 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 				//ub_printf("linebuf[%d] == %c\r\n",i,linebuf[i]);
 				if(linebuf[i] == '\n' && ub_isdigit(linebuf[i+1])){
 					int cur_digit = ub_atoi(&(linebuf[i+1]));
-					ub_printf("linebuf digit: %d\r\n",digit);
+					//ub_printf("linebuf digit: %d\r\n",digit);
 					if(cur_digit == digit){
 						char truncated_linebuf[1024];
 						char backup_linebuf[1024];
 						int orig_line_start, end_line_start;
 						int retval;
 						replace_flag = 1;
-						ub_printf("match found\r\n");
-						ub_printf("linebuf text: %s\r\n", &linebuf[i]);
-						ub_printf("cbuf text: %s\r\n", cbuf);
-						/* TODO: add line replacement support here*/
+						//ub_printf("match found\r\n");
+						//ub_printf("linebuf text: %s\r\n", &linebuf[i]);
+						//ub_printf("cbuf text: %s\r\n", cbuf);
 						orig_line_start = i+1;
-						ub_printf("orig_line_start: %d\r\n",orig_line_start);
+						//ub_printf("orig_line_start: %d\r\n",orig_line_start);
 						retval = mini_snprintf(truncated_linebuf,orig_line_start+1,"%s",linebuf);
-						ub_printf("mini_snprintf() retval: %d\r\n",retval);
+						//ub_printf("mini_snprintf() retval: %d\r\n",retval);
 						for(end_line_start=orig_line_start;linebuf[end_line_start] != '\n';end_line_start++){
 						}
-						ub_printf("truncated_linebuf: %s\r\n",truncated_linebuf);
+						//ub_printf("truncated_linebuf: %s\r\n",truncated_linebuf);
 						for(retval=0;retval<30;retval++)
-							ub_printf("(%d,0x%x)",retval,truncated_linebuf[retval]);
-						ub_printf("end_line_start: %d\r\n",end_line_start);
-						ub_printf("&linebuf[end_line_start]: %s\r\n",&linebuf[end_line_start]);
+							//ub_printf("(%d,0x%x)",retval,truncated_linebuf[retval]);
+						//ub_printf("end_line_start: %d\r\n",end_line_start);
+						//ub_printf("&linebuf[end_line_start]: %s\r\n",&linebuf[end_line_start]);
 						ub_memcpy(backup_linebuf,linebuf,1024);
 						ub_memset(linebuf,0,1024); /*TODO: remove this*/
-						ub_printf("backup_linebuf: %s\r\n",backup_linebuf);
+						//ub_printf("backup_linebuf: %s\r\n",backup_linebuf);
 						mini_snprintf(linebuf,1024,"%s%s%s",truncated_linebuf,cbuf,&backup_linebuf[end_line_start+1]);
-						ub_printf("past snprintf()\r\n");
-						ub_printf("hexdump linebuf\r\n");
-						for(retval=0;retval<30;retval++)
-							ub_printf("(%d,0x%x)",retval,linebuf[retval]);
+						//ub_printf("past snprintf()\r\n");
+						//ub_printf("hexdump linebuf\r\n");
+						//for(retval=0;retval<30;retval++)
+							//ub_printf("(%d,0x%x)",retval,linebuf[retval]);
 					}
 				}
 			}
