@@ -71,18 +71,24 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 				if(cur_digit == digit){
 					replace_flag = 1;
 					int orig_line_len, growlen;
+					char backup_linebuf[1024];
 					for(orig_line_len=0;linebuf[orig_line_len] != '\n';orig_line_len++){
 					}
-					ub_printf("cbuf len: %d\r\n",ub_strlen(cbuf));
-					ub_printf("linebuf len: %d\r\n",i);
-					growlen = ub_strlen(cbuf) - orig_line_len - 1;
-					ub_printf("match found at beginning of line\r\n");
-					ub_printf("linebuf text: %s\r\n", linebuf);
-					ub_printf("cbuf text: %s\r\n", cbuf);
-					ub_printf("growlen: %d\r\n", growlen);
+					//ub_printf("cbuf len: %d\r\n",ub_strlen(cbuf));
+					//ub_printf("linebuf len: %d\r\n",i);
+					//growlen = ub_strlen(cbuf) - orig_line_len - 1;
+					//ub_printf("match found at beginning of line\r\n");
+					//ub_printf("linebuf text: %s\r\n", linebuf);
+					//ub_printf("cbuf text: %s\r\n", cbuf);
+					//ub_printf("growlen: %d\r\n", growlen);
+					//ub_printf("orig_line_len: %d\r\n",orig_line_len);
+					//ub_printf("linebuf[orig_line_len+1] = 0x%x,%c\r\n",linebuf[orig_line_len+1],linebuf[orig_line_len+1]);
+					ub_memcpy(backup_linebuf,&linebuf[orig_line_len+1],1024);
 					len = 0; /* skip the for loop to not look for a match again */
 					/* use snprintf() to grow the string */
-					mini_snprintf(linebuf,9999,"%s%s",cbuf,linebuf[orig_line_len+1]);
+					//ub_printf("backup_linebuf:%s\r\n",backup_linebuf);
+					mini_snprintf(linebuf,1024,"%s%s",cbuf,backup_linebuf);
+					//ub_printf("new linebuf:%s\r\n",linebuf);
 				}
 			}
 			for(i=0;i<len;i++){
