@@ -58,7 +58,6 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 		if(ub_isdigit(cbuf[0])){
 			int i, digit, len, replace_flag;
 			char digit_str[8];
-			char cur_digit[8];
 			replace_flag = 0;
 			len = ub_strlen(linebuf);
 			digit = ub_atoi(cbuf);
@@ -67,7 +66,7 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 				int cur_digit = ub_atoi(linebuf);
 				if(cur_digit == digit){
 					replace_flag = 1;
-					int orig_line_len, growlen;
+					int orig_line_len;
 					char backup_linebuf[1024];
 					for(orig_line_len=0;linebuf[orig_line_len] != '\n';orig_line_len++){
 					}
