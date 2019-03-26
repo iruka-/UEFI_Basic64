@@ -52,12 +52,15 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 	for(i=0;i<50;i++){
 		buf[i] = 0;
 	}
+	/* Prompt */
 	eST->ConOut->OutputString(eST->ConOut,L"UEFI BASIC v0.1\r\n");
 	eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 	ub_memset(linebuf,0,1024);
 	while(1){
+		/* Wait for user to enter a line */
 		ub_readline(eST,&bufptr);
 		ub_u2c(cbuf,buf,500);
+		/* If the line starts with a digit */
 		if(ub_isdigit(cbuf[0])){
 			int i, digit, len, replace_flag;
 			char digit_str[8];
