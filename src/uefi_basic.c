@@ -5,6 +5,8 @@
 #include "efitable.h"
 #include "ubasic/ubasic.h"
 
+/* TODO: Add more comments */
+
 EFI_SYSTEM_TABLE *gST;
 
 EFI_SYSTEM_TABLE **ub_get_eST(){
