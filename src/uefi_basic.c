@@ -6,6 +6,7 @@
 #include "ubasic/ubasic.h"
 
 /* TODO: Add more comments */
+/* TODO: Remove or change fixed sized buffers */
 
 EFI_SYSTEM_TABLE *gST;
 
