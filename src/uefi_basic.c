@@ -45,39 +45,44 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 	CHAR16 buf[512];
 	CHAR16 *bufptr = &buf[0];
 	char cbuf[512];
-	char linebuf[1024];
+	char linebuf[1024]; /* Program code memory */
 	int i = 0;
 	gST = eST;
 	/*Initialize buffer memory*/
-	for(i=0;i<50;i++){
+	for(i=0;i<511;i++){
 		buf[i] = 0;
 	}
 	/* Prompt */
 	eST->ConOut->OutputString(eST->ConOut,L"UEFI BASIC v0.1\r\n");
 	eST->ConOut->OutputString(eST->ConOut,L"Ok\r\n");
 	ub_memset(linebuf,0,1024);
+	/* Input loop */
 	while(1){
 		/* Wait for user to enter a line */
 		ub_readline(eST,&bufptr);
+		/* Read line into cbuf */
 		ub_u2c(cbuf,buf,500);
-		/* If the line starts with a digit */
+		/* If the line starts with a digit (if we are enterring code into memory */
 		if(ub_isdigit(cbuf[0])){
 			int i, digit, len, replace_flag;
 			char digit_str[8];
 			replace_flag = 0;
-			len = ub_strlen(linebuf);
+			len = ub_strlen(linebuf); /* Length of stored program code */
 			digit = ub_atoi(cbuf);
 			mini_snprintf(digit_str,5,"%d",digit);
+			/* If line is greater than 2 chars and line starts with a digit*/
 			if(len > 2 && ub_isdigit(linebuf[0])){
 				int cur_digit = ub_atoi(linebuf);
+				/* If we are replacing a line */
 				if(cur_digit == digit){
 					replace_flag = 1;
 					int orig_line_len;
 					char backup_linebuf[1024];
-					for(orig_line_len=0;linebuf[orig_line_len] != '\n';orig_line_len++){
-					}
+					/* Get length of the original line (the one we are replacing) */
+					for(orig_line_len=0;linebuf[orig_line_len] != '\n';orig_line_len++){}
 					ub_memcpy(backup_linebuf,&linebuf[orig_line_len+1],1024);
-					len = 0; /* skip the for loop to not look for a match again */
+					/* skip the next for loop to not look for a match again */
+					len = 0;
 					/* use snprintf() to grow the string */
 					mini_snprintf(linebuf,1024,"%s%s",cbuf,backup_linebuf);
 				}
@@ -85,6 +90,7 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 			for(i=0;i<len;i++){
 				if(linebuf[i] == '\n' && ub_isdigit(linebuf[i+1])){
 					int cur_digit = ub_atoi(&(linebuf[i+1]));
+					/* If we are replacing a line */
 					if(cur_digit == digit){
 						char truncated_linebuf[1024];
 						char backup_linebuf[1024];
@@ -102,6 +108,7 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 					}
 				}
 			}
+			/* Add code on to the end of the the program memory if we aren't replacing*/
 			if(!replace_flag){
 				mini_snprintf(linebuf,1000,"%s%s",linebuf,cbuf);
 			}
