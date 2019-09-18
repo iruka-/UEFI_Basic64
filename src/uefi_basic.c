@@ -87,23 +87,32 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 					mini_snprintf(linebuf,1024,"%s%s",cbuf,backup_linebuf);
 				}
 			}
+			/* For each character in the program memory */
 			for(i=0;i<len;i++){
+				/* If there is a newline and the next character is a digit */
 				if(linebuf[i] == '\n' && ub_isdigit(linebuf[i+1])){
 					int cur_digit = ub_atoi(&(linebuf[i+1]));
-					/* If we are replacing a line */
+					/* If this is the right line we want to replace and the line numbers are the same */
 					if(cur_digit == digit){
 						char truncated_linebuf[1024];
 						char backup_linebuf[1024];
 						int orig_line_start, end_line_start;
 						int retval;
 						replace_flag = 1;
+						/* Set orig_line_start to the posistion of the start of the original line */
 						orig_line_start = i+1;
+						/* Copy everything from the program memory up to the start original line
+						and store in truncated_linebuf*/
 						retval = mini_snprintf(truncated_linebuf,orig_line_start+1,"%s",linebuf);
+						/* Set end_line_start to the position of the end of the original line */
 						for(end_line_start=orig_line_start;linebuf[end_line_start] != '\n';end_line_start++){
 						}
+						/* What does this do?? */
 						for(retval=0;retval<30;retval++)
 						ub_memcpy(backup_linebuf,linebuf,1024);
 						ub_memset(linebuf,0,1024); /*TODO: remove this*/
+						/* Add new line into the program memory between the where the old line started and
+						where the old line ended*/
 						mini_snprintf(linebuf,1024,"%s%s%s",truncated_linebuf,cbuf,&backup_linebuf[end_line_start+1]);
 					}
 				}
