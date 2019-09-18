@@ -93,6 +93,7 @@ EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
 				if(linebuf[i] == '\n' && ub_isdigit(linebuf[i+1])){
 					int cur_digit = ub_atoi(&(linebuf[i+1]));
 					/* If this is the right line we want to replace and the line numbers are the same */
+					/* replace the old line with the new line */
 					if(cur_digit == digit){
 						char truncated_linebuf[1024];
 						char backup_linebuf[1024];
