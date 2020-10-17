@@ -21,4 +21,5 @@ Remove commented out lines
 
 Remove now unneeded functions and files
 
-Add PEEK/POKE support for pointers, arrays, and strings. Add 8-bit PEEK/POKES as well as possibly 16 bit.
+Add PEEK/POKE support for pointers, arrays, and strings. Add 8-bit PEEK/POKES as well as possibly 16 bit. POKE and PEEK both work (Peek needs parantheses with spacing,
+such as PEEK( 1000 ), same with the ABS() function). I added the actual POKE functionality. Ocassionally when I poke I get a "How?" message.

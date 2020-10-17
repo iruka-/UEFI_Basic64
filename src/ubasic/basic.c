@@ -1724,6 +1724,9 @@ poke:
     if(expression_error)
       goto qwhat;
     //printf("Poke %p value %i\n",address, (unsigned char)value);
+
+    /*Actually do the poke */
+    program[(int)address] = value;
     // Check that we are at the end of the statement
     if(*txtpos != NL && *txtpos != ':')
       goto qwhat;
