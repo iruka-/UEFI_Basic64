@@ -900,16 +900,15 @@ static short int expr4(void)
     {
     case FUNC_PEEK:
       return program[a];
-      
     case FUNC_ABS:
-      if(a < 0) 
+      if(a < 0)
         return -a;
       return a;
 
 #ifdef ARDUINO
     case FUNC_AREAD:
       pinMode( a, INPUT );
-      return analogRead( a );                        
+      return analogRead( a );
     case FUNC_DREAD:
       pinMode( a, INPUT );
       return digitalRead( a );

@@ -23,4 +23,5 @@ iso:
 clean:
 	rm *.iso *.o *.EFI
 qemu:
+	cp -n BOOTX64.EFI bak.efi
 	$(QEMU) -bios ../bios64.bin -drive file=fat:rw:./,format=raw
