@@ -1,6 +1,6 @@
 #include <efi.h>
 #include <efilib.h>
-#include "mini-printf/mini-printf.h"
+//#include "mini-printf/mini-printf.h"
 #include "efitable.h"
 #include "util.h"
 int ub_c2u(CHAR16 *pwcs, const char *s, int n){
@@ -104,6 +104,7 @@ int ub_atoi(const char *s){
         return num*sign;
 }
 
+/*
 
 int ub_printf(char *fmt,...){
 	char buffer[1024];
@@ -120,10 +121,10 @@ int ub_printf(char *fmt,...){
 	return ret;
 }
 
-int ub_putchar(int character){
-	CHAR16 ch;
-	EFI_SYSTEM_TABLE *eST = *ub_get_eST();
-	ub_c2u(&ch,(char *)&character,1);
+*/
+int ub_putchar(int character, EFI_SYSTEM_TABLE *eST){
+	CHAR16 ch[2]; /* This variable needs to be an array of 2 or else an extra space prints */
+	ub_c2u(ch,(char *)&character,1);
 	eST->ConOut->OutputString(eST->ConOut,&ch);
 	return character;
 }
@@ -176,9 +177,11 @@ void ub_readline(EFI_SYSTEM_TABLE *eST,CHAR16 **buf){
     text[Len+2] = 0;
 }
 
+/*
 void ub_pause(){
 	UINTN Index;
 	EFI_SYSTEM_TABLE *eST = *ub_get_eST();
 	eST->BootServices->WaitForEvent(1, &(eST->ConIn->WaitForKey), &Index);
 }
 
+*/
