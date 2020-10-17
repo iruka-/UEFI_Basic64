@@ -1,5 +1,7 @@
 CC=x86_64-w64-mingw32-gcc
 CFLAGS=-ffreestanding -I./gnu-efi/inc -I./gnu-efi/inc/x86_64 -I./gnu-efi/inc/protocol -Wall --std=c99 -pedantic
+MKISOFS=xorrisofs
+QEMU="/mnt/c/Program Files/qemu/qemu-system-x86_64.exe"
 all: build iso
 build:
 	$(CC) $(CFLAGS) -c -o mini-printf.o ./src/mini-printf/mini-printf.c
@@ -14,6 +16,8 @@ build:
 	$(CC) $(CFLAGS) -c -o data.o ./gnu-efi/lib/data.c
 	$(CC) -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main -o BOOTX64.EFI mini-printf.o ubasic.o tokenizer.o uefi_basic.o util.o data.o -lgcc
 iso:
-	mkisofs -o uefi_basic.iso --root /EFI/BOOT BOOTX64.EFI
+	$(MKISOFS) -o uefi_basic.iso --root /EFI/BOOT BOOTX64.EFI
 clean:
 	rm *.iso *.o *.EFI
+qemu:
+	$(QEMU) -bios ../bios64.bin -drive file=fat:rw:./,format=raw
