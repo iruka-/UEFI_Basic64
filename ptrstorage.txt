@@ -1,0 +1,10 @@
+10 LET X = 735
+20 LET P = 5100
+30 POKE P, X
+40 POKE P+1, X/256
+45 REM Read from memory
+50 LET A = PEEK( P )
+60 LET B = 256 * PEEK( P + 1 )
+70 LET C = A + B
+80 PRINT C
+90 REM It should print again the original number 735

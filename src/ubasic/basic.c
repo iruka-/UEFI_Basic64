@@ -90,7 +90,7 @@
 //      ref: http://arduino.cc/forum/index.php/topic,124739.0.html
 //      fixed filesize printouts (added printUnum for unsigned numbers)
 //      #defineable baud rate for slow connection throttling
-//e
+//
 // v0.08: 2012-10-02
 //      Tone generation through piezo added (TONE, TONEW, NOTONE)
 //
@@ -153,6 +153,13 @@ EFI_SYSTEM_TABLE *global_eST = (void *)0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Feature option configuration...
+// Non-terse error messages
+#define ERR_MSGS
+#ifdef ERR_MSGS
+#define XSTR(x) STR(x)
+#define STR(x) #x
+#define PRINT_ERR() printmsg((unsigned char*)("Line:" XSTR(__LINE__)))
+#endif
 
 // This enables LOAD, SAVE, FILES commands through the Arduino SD Library
 // it adds 9k of usage as well.
@@ -168,7 +175,10 @@ EFI_SYSTEM_TABLE *global_eST = (void *)0;
 
 // this is the alternate autorun.  Autorun the program in the eeprom.
 // it will load whatever is in the EEProm and run it
+#define ENABLE_EAUTORUN 0
+#ifdef ARDUINO
 #define ENABLE_EAUTORUN 1
+#endif
 //#undef ENABLE_EAUTORUN
 
 // this will enable the "TONE", "NOTONE" command using a piezo
@@ -184,7 +194,9 @@ EFI_SYSTEM_TABLE *global_eST = (void *)0;
 // allow for this funcitonality to work.  Note that this only works on AVR
 // arduino.  Disable it for DUE/other devices.
 #define ENABLE_EEPROM 1
-//#undef ENABLE_EEPROM
+#ifndef ARDUINO
+#undef ENABLE_EEPROM
+#endif
 
 // Sometimes, we connect with a slower device as the console.
 // Set your console D0/D1 baud rate here (9600 baud default)
@@ -899,7 +911,7 @@ static short int expr4(void)
     switch(f)
     {
     case FUNC_PEEK:
-      return program[a];
+      return (unsigned char)program[a];
     case FUNC_ABS:
       if(a < 0)
         return -a;
@@ -1049,6 +1061,8 @@ static short int expression(void)
 }
 
 /***************************************************************************/
+/* Function declaration for GCC */
+void loop();
 #ifdef FORCE_DESKTOP
 int main(void){
   loop();
@@ -1057,13 +1071,6 @@ int main(void){
 #endif
 #ifdef FORCE_UEFI
   EFI_STATUS efi_main(EFI_HANDLE eIH, EFI_SYSTEM_TABLE *eST){
-    /*char test[] = "Hello.";
-    int i = 0;
-    eST->ConOut->OutputString(eST->ConOut,"A");
-    eST->ConOut->OutputString(eST->ConOut,"B");
-    for(i = 0; i < 6; i++){
-      ub_putchar(test[i],eST);
-    }*/
     global_eST = eST;
     loop();
     return EFI_SUCCESS;
@@ -1151,8 +1158,10 @@ prompt:
   if(linenum == 0)
     goto direct;
 
-  if(linenum == 0xFFFF)
+  if(linenum == 0xFFFF){
+    PRINT_ERR();
     goto qhow;
+  }
 
   // Find the length of what is left, including the (yet-to-be-populated) line header
   linelen = 0;
@@ -1324,8 +1333,10 @@ interperateAtTxtpos:
   case KW_MEM:
     goto mem;
   case KW_NEW:
-    if(txtpos[0] != NL)
+    if(txtpos[0] != NL){
+      PRINT_ERR();
       goto qwhat;
+    }
     program_end = program_start;
     goto prompt;
   case KW_RUN:
@@ -1341,8 +1352,10 @@ interperateAtTxtpos:
     short int val;
     expression_error = 0;
     val = expression();
-    if(expression_error || *txtpos == NL)
+    if(expression_error || *txtpos == NL){
+      PRINT_ERR();
       goto qhow;
+    }
     if(val != 0)
       goto interperateAtTxtpos;
     goto execnextline;
@@ -1350,8 +1363,10 @@ interperateAtTxtpos:
   case KW_GOTO:
     expression_error = 0;
     linenum = expression();
-    if(expression_error || *txtpos != NL)
+    if(expression_error || *txtpos != NL){
+      PRINT_ERR();
       goto qhow;
+    }
     current_line = findline();
     goto execline;
 
@@ -1374,8 +1389,10 @@ interperateAtTxtpos:
   case KW_END:
   case KW_STOP:
     // This is the easy way to end - set the current line to the end of program attempt to run it
-    if(txtpos[0] != NL)
+    if(txtpos[0] != NL){
+      PRINT_ERR();
       goto qwhat;
+    }
     current_line = program_end;
     goto execline;
   case KW_BYE:
@@ -1506,13 +1523,17 @@ input:
     unsigned char var;
     int value;
     ignore_blanks();
-    if(*txtpos < 'A' || *txtpos > 'Z')
+    if(*txtpos < 'A' || *txtpos > 'Z'){
+      PRINT_ERR();
       goto qwhat;
+    }
     var = *txtpos;
     txtpos++;
     ignore_blanks();
-    if(*txtpos != NL && *txtpos != ':')
+    if(*txtpos != NL && *txtpos != ':'){
+      PRINT_ERR();
       goto qwhat;
+    }
 inputagain:
     tmptxtpos = txtpos;
     getln( '?' );
@@ -1534,41 +1555,55 @@ forloop:
     unsigned char var;
     short int initial, step, terminal;
     ignore_blanks();
-    if(*txtpos < 'A' || *txtpos > 'Z')
+    if(*txtpos < 'A' || *txtpos > 'Z'){
+      PRINT_ERR();
       goto qwhat;
+    }
     var = *txtpos;
     txtpos++;
     ignore_blanks();
-    if(*txtpos != '=')
+    if(*txtpos != '='){
+      PRINT_ERR();
       goto qwhat;
+    }
     txtpos++;
     ignore_blanks();
 
     expression_error = 0;
     initial = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     scantable(to_tab);
-    if(table_index != 0)
+    if(table_index != 0){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     terminal = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     scantable(step_tab);
     if(table_index == 0)
     {
       step = expression();
-      if(expression_error)
+      if(expression_error){
+        PRINT_ERR();
         goto qwhat;
+      }
     }
     else
       step = 1;
     ignore_blanks();
-    if(*txtpos != NL && *txtpos != ':')
+    if(*txtpos != NL && *txtpos != ':'){
+      PRINT_ERR();
       goto qwhat;
+    }
 
 
     if(!expression_error && *txtpos == NL)
@@ -1589,6 +1624,7 @@ forloop:
       goto run_next_statement;
     }
   }
+  PRINT_ERR();
   goto qhow;
 
 gosub:
@@ -1608,17 +1644,22 @@ gosub:
     current_line = findline();
     goto execline;
   }
+  PRINT_ERR();
   goto qhow;
 
 next:
   // Fnd the variable name
   ignore_blanks();
-  if(*txtpos < 'A' || *txtpos > 'Z')
+  if(*txtpos < 'A' || *txtpos > 'Z'){
+    PRINT_ERR();
     goto qhow;
+  }
   txtpos++;
   ignore_blanks();
-  if(*txtpos != ':' && *txtpos != NL)
+  if(*txtpos != ':' && *txtpos != NL){
+    PRINT_ERR();
     goto qwhat;
+  }
 
 gosub_return:
   // Now walk up the stack frames and find the frame we want, if present
@@ -1671,6 +1712,7 @@ gosub_return:
     }
   }
   // Didn't find the variable we've been looking for
+  PRINT_ERR();
   goto qhow;
 
 assignment:
@@ -1678,58 +1720,77 @@ assignment:
     short int value;
     short int *var;
 
-    if(*txtpos < 'A' || *txtpos > 'Z')
+    if(*txtpos < 'A' || *txtpos > 'Z'){
+      PRINT_ERR();
       goto qhow;
+    }
     var = (short int *)variables_begin + *txtpos - 'A';
     txtpos++;
 
     ignore_blanks();
 
-    if (*txtpos != '=')
+    if (*txtpos != '='){
+      PRINT_ERR();
       goto qwhat;
+    }
     txtpos++;
     ignore_blanks();
     expression_error = 0;
     value = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
     // Check that we are at the end of the statement
-    if(*txtpos != NL && *txtpos != ':')
+    if(*txtpos != NL && *txtpos != ':'){
+      PRINT_ERR();
       goto qwhat;
+    }
     *var = value;
   }
   goto run_next_statement;
 poke:
   {
-    short int value;
-    unsigned char *address;
+    unsigned short int value;
+    //unsigned char *address;
+    /* This needs to be signed for now because the PEEK function can only used signed ints */
+    int address;
 
     // Work out where to put it
     expression_error = 0;
     value = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
-    address = (unsigned char *)value;
+    }
+    //address = (unsigned char *)value;
+    address = value;
 
     // check for a comma
     ignore_blanks();
-    if (*txtpos != ',')
+    if (*txtpos != ','){
+      PRINT_ERR();
       goto qwhat;
+    }
     txtpos++;
     ignore_blanks();
 
     // Now get the value to assign
     expression_error = 0;
     value = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
     //printf("Poke %p value %i\n",address, (unsigned char)value);
 
     /*Actually do the poke */
-    program[(int)address] = value;
+    *(program + address) = value;
     // Check that we are at the end of the statement
-    if(*txtpos != NL && *txtpos != ':')
+    if(*txtpos != NL && *txtpos != ':'){
+      PRINT_ERR();
       goto qwhat;
+    }
   }
   goto run_next_statement;
 
@@ -1737,8 +1798,10 @@ list:
   linenum = testnum(); // Retuns 0 if no line found.
 
   // Should be EOL
-  if(txtpos[0] != NL)
+  if(txtpos[0] != NL){
+    PRINT_ERR();
     goto qwhat;
+  }
 
   // Find the line
   list_line = findline();
@@ -1766,15 +1829,19 @@ print:
     {
       ;
     }
-    else if(*txtpos == '"' || *txtpos == '\'')
+    else if(*txtpos == '"' || *txtpos == '\''){
+      PRINT_ERR();
       goto qwhat;
+    }
     else
     {
       short int e;
       expression_error = 0;
       e = expression();
-      if(expression_error)
+      if(expression_error){
+        PRINT_ERR();
         goto qwhat;
+      }
       printnum(e);
     }
 
@@ -1791,8 +1858,10 @@ print:
       line_terminator();	// The end of the print statement
       break;
     }
-    else
-      goto qwhat;	
+    else{
+      PRINT_ERR();
+      goto qwhat;
+    }
   }
   goto run_next_statement;
 
@@ -1835,13 +1904,17 @@ dwrite:
     // Get the pin number
     expression_error = 0;
     pinNo = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     // check for a comma
     ignore_blanks();
-    if (*txtpos != ',')
+    if (*txtpos != ','){
+      PRINT_ERR();
       goto qwhat;
+    }
     txtpos++;
     ignore_blanks();
 
@@ -1862,8 +1935,10 @@ dwrite:
       // and the value (numerical)
       expression_error = 0;
       value = expression();
-      if(expression_error)
+      if(expression_error){
+        PRINT_ERR();
         goto qwhat;
+      }
     }
     pinMode( pinNo, OUTPUT );
     if( isDigital ) {
@@ -1909,8 +1984,10 @@ load:
     // Work out the filename
     expression_error = 0;
     filename = filenameWord();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
 #ifdef ARDUINO
     // Arduino specific
@@ -1946,8 +2023,10 @@ save:
     // Work out the filename
     expression_error = 0;
     filename = filenameWord();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
 #ifdef ARDUINO
     // remove the old file if it exists
@@ -1984,13 +2063,15 @@ rseed:
     //Get the pin number
     expression_error = 0;
     value = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
 #ifdef ARDUINO
     randomSeed( value );
 #elif defined(FORCE_UEFI)
-    //TODO
+    //TODO Add actual RNG
 #else // ARDUINO
     srand( value );
 #endif
@@ -2012,12 +2093,16 @@ tonegen:
     //Get the frequency
     expression_error = 0;
     freq = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     ignore_blanks();
-    if (*txtpos != ',')
+    if (*txtpos != ','){
+      PRINT_ERR();
       goto qwhat;
+    }
     txtpos++;
     ignore_blanks();
 
@@ -2025,8 +2110,10 @@ tonegen:
     //Get the duration
     expression_error = 0;
     duration = expression();
-    if(expression_error)
+    if(expression_error){
+      PRINT_ERR();
       goto qwhat;
+    }
 
     if( freq == 0 || duration == 0 )
       goto tonestop;
@@ -2153,9 +2240,8 @@ static unsigned char breakcheck(void)
 /***********************************************************/
 static int inchar()
 {
-  int v;
+ int v;
 #ifdef ARDUINO
-  
   switch( inStream ) {
   case( kStreamFile ):
 #ifdef ENABLE_FILEIO

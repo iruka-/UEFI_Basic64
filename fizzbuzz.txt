@@ -1,0 +1,15 @@
+10 FOR A = 1 to 100
+15 REM Calculating modulo with integer division
+20 IF (A - (A / 15) * 15) = 0 GOTO 110
+30 IF (A - (A / 3) * 3) = 0 GOTO 70
+40 IF (A - (A / 5) * 5) = 0 GOTO 90
+50 PRINT A
+60 GOTO 130
+70 PRINT "Fizz"
+80 GOTO 130
+90 PRINT "Buzz"
+100 GOTO 130
+110 Print "FizzBuzz"
+120 GOTO 130
+130 NEXT A
+140 END

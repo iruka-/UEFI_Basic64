@@ -22,4 +22,13 @@ Remove commented out lines
 Remove now unneeded functions and files
 
 Add PEEK/POKE support for pointers, arrays, and strings. Add 8-bit PEEK/POKES as well as possibly 16 bit. POKE and PEEK both work (Peek needs parantheses with spacing,
-such as PEEK( 1000 ), same with the ABS() function). I added the actual POKE functionality. Ocassionally when I poke I get a "How?" message.
+such as PEEK( 1000 ), same with the ABS() function). I added the actual POKE functionality. Changing the data type of the "address" from unsigned char* to int
+in the POKE code helped get rid of the "How" errors, which seemed to be caused by the signedness. Values are stored as 8-bit unsigned, for example running POKE 6000, -5
+and them PRINT PEEK( 6000 ) prints out "251". Changing the PEEK data type to signed char works but it doesn't work trying to store 16 bit numbers with the conventional
+method. 
+
+Add printing char function, so it can read from PEEKed memory
+
+Add error codes, not so terse (more than "What?" or "How?"), use __LINE__
+
+Add example programs
