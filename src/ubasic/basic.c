@@ -911,7 +911,12 @@ static short int expr4(void)
     switch(f)
     {
     case FUNC_PEEK:
-      return (unsigned char)program[a];
+      /*printf("kRamSize: %d\n",kRamSize);
+      printf("sizeof(int): %d\n",sizeof(unsigned int));
+      printf("Addr to peek: %d\n\n",(unsigned int)a);
+      printf("Printing data at -1200/64336: %d\n",program[64336]);
+      */
+      return program[(unsigned short int)a];
     case FUNC_ABS:
       if(a < 0)
         return -a;
@@ -1752,9 +1757,8 @@ assignment:
 poke:
   {
     unsigned short int value;
-    //unsigned char *address;
-    /* This needs to be signed for now because the PEEK function can only used signed ints */
-    int address;
+    /* both peek and poke use unsigned short ints (should be uint_32t) now */
+    unsigned short int address;
 
     // Work out where to put it
     expression_error = 0;
@@ -1782,7 +1786,7 @@ poke:
       PRINT_ERR();
       goto qwhat;
     }
-    //printf("Poke %p value %i\n",address, (unsigned char)value);
+    //printf("Poke %i value %i\n",address, (unsigned char)value);
 
     /*Actually do the poke */
     *(program + address) = value;

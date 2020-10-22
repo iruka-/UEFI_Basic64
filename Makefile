@@ -20,11 +20,11 @@ build:
 	$(CC) $(CFLAGS) -c -o util.o ./src/util.c
 	$(CC) -nostdlib -Wl,-dll -shared -Wl,--subsystem,10 -e efi_main -o BOOTX64.EFI util.o basic.o
 desktop:
-	$(DESK_CC) -DFORCE_DESKTOP -o basic ./src/ubasic/basic.c
+	$(DESK_CC) -g -DFORCE_DESKTOP -o basic ./src/ubasic/basic.c
 iso:
 	$(MKISOFS) -o uefi_basic.iso --root /EFI/BOOT BOOTX64.EFI
 clean:
-	rm *.iso *.o *.EFI basic
+	rm -f *.iso *.o *.EFI basic *.efi
 qemu:
 	cp -n BOOTX64.EFI bak.efi
 	$(QEMU) -bios ../bios64.bin -drive file=fat:rw:./,format=raw
