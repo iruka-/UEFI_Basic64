@@ -1,0 +1,12 @@
+10 PRINT "Enter 5 characters:"
+20 P = 5000
+30 FOR I = 1 TO 5
+40 X = GETC(0)
+50 POKE P, X
+60 P = P + 1
+70 NEXT I
+80 PRINT "Printing the 5 chars:"
+90 FOR Q = 5000 TO 5005
+100 X = PEEK(Q)
+110 Y = PUTC(X)
+120 NEXT Q

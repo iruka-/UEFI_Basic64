@@ -479,12 +479,15 @@ struct stack_gosub_frame {
   unsigned char *txtpos;
 };
 
+/*PUTC and GETC added to func tab */
 const static unsigned char func_tab[] PROGMEM = {
   'P','E','E','K'+0x80,
   'A','B','S'+0x80,
   'A','R','E','A','D'+0x80,
   'D','R','E','A','D'+0x80,
   'R','N','D'+0x80,
+  'P','U','T','C'+0x80,
+  'G','E','T','C'+0x80,
   0
 };
 #define FUNC_PEEK    0
@@ -492,7 +495,9 @@ const static unsigned char func_tab[] PROGMEM = {
 #define FUNC_AREAD   2
 #define FUNC_DREAD   3
 #define FUNC_RND     4
-#define FUNC_UNKNOWN 5
+#define FUNC_PUTC    5
+#define FUNC_GETC    6
+#define FUNC_UNKNOWN 7
 
 const static unsigned char to_tab[] PROGMEM = {
   'T','O'+0x80,
@@ -572,10 +577,13 @@ static const unsigned char slashmsg[]         PROGMEM = "/";
 static const unsigned char spacemsg[]         PROGMEM = " ";
 
 static int inchar(void);
+static unsigned char inchar2(void);
 static void outchar(unsigned char c);
 static void line_terminator(void);
 static short int expression(void);
 static unsigned char breakcheck(void);
+
+static char GETC_FLAG = 0;
 /***************************************************************************/
 static void ignore_blanks(void)
 {
@@ -920,6 +928,19 @@ static short int expr4(void)
     case FUNC_ABS:
       if(a < 0)
         return -a;
+      return a;
+    case FUNC_GETC:
+      /* Hack to make getchar work without waiting for enter key */
+      #ifdef linux
+      system("/bin/stty raw -echo");
+      #endif
+      a = getchar();
+      #ifdef linux
+      system("/bin/stty cooked echo");
+      #endif
+      return a;
+    case FUNC_PUTC:
+      outchar(a);
       return a;
 
 #ifdef ARDUINO
@@ -1754,6 +1775,7 @@ assignment:
     *var = value;
   }
   goto run_next_statement;
+
 poke:
   {
     unsigned short int value;
@@ -2311,6 +2333,15 @@ inchar_loadfinish:
 #endif
 }
 
+/****************************/
+static unsigned char inchar2(){
+  #ifdef FORCE_DESKTOP
+  return (unsigned char)getchar();
+  #else
+  return (unsigned char)7;
+  #endif
+}
+/****************************/
 /***********************************************************/
 static void outchar(unsigned char c)
 {

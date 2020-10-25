@@ -26,4 +26,5 @@ or shutdown.
 
 Remove commented out lines
 
-Add printing and reading char function, so they can store to memory.
+Add printing and reading char functions to UEFI mode and not just desktop
+
