@@ -934,7 +934,7 @@ static short int expr4(void)
       #ifdef linux
       system("/bin/stty raw -echo");
       #endif
-      a = getchar();
+      a = inchar();
       #ifdef linux
       system("/bin/stty cooked echo");
       #endif
