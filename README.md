@@ -13,7 +13,7 @@ UEFI bootable ISO files can be found on the [releases page](https://github.com/l
 ## Language info
 The version of BASIC used in this project is a C version of TinyBASIC, a highly portable BASIC interpreter which only depends on a couple external functions for IO.
 A list of all the commands and functions can be located [here](src/ubasic/README.md). This version of BASIC included runs on desktop operating systems, UEFI, and
-Arduino.
+Arduino. The BASIC interpreter is based on an interpreter for the Motorola 68000, but the code is messy with a lot of `goto` statements. I switched to the TinyBASIC interpreter from uBASIC because the TinyBASIC didn't require so many external library functions.
 
 All variables are a single letter and are `short`s (signed integers, and 16-bit on most implementations). Memory ddresses for the PEEK and POKE commands are also `short`s.
 The addresses are indexes in a C array. Negative addresses can be used as they will simply be converted to their 2's complement, accessing higher memory than the
