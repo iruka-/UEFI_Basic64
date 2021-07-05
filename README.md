@@ -4,10 +4,14 @@ A simple BASIC language intepreter that runs on UEFI. Feel free to submit a pull
 The gcc compiler for x86\_64 mingw platform (x86\_64-w64-mingw32-gcc, this can be found in the Debian package mingw-w64).
 ## Compilation
 Running `make` will produce an EFI file and a bootable ISO for the x86\_64 architechture.
+
+Running `make qemu` will run the QEMU emulator.
 ## Usage
 Programs need to be typed in with line numbers. To run use the `run` command, and to create a new program use the `new` command. `list` prints out the current program.
 ## Credits
-Credit to [gnu-efi](https://github.com/vathpela/gnu-efi) and TinyBsaicPlus.
+Credit to [gnu-efi](https://github.com/vathpela/gnu-efi), TinyBasicPlus, and EDK2.
+
+Licenses for each can be found in the LICENSE.* files.
 ## Downloads
 UEFI bootable ISO files can be found on the [releases page](https://github.com/logern5/UEFI_Basic/releases).
 ## Language info

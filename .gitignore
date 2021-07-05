@@ -6,4 +6,3 @@ Makefile.*
 *.a
 *.efi
 arm
-NvVars
