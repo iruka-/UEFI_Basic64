@@ -3,6 +3,7 @@ DESK_CC=gcc
 CFLAGS=-ffreestanding -I./gnu-efi/inc -I./gnu-efi/inc/x86_64 -I./gnu-efi/inc/protocol -Wall --std=c99
 MKISOFS=xorrisofs
 QEMU="/mnt/c/Program Files/qemu/qemu-system-x86_64.exe"
+QEMU="qemu-system-x86_64"
 all: build iso
 build:
 	#$(CC) $(CFLAGS) -c -o mini-printf.o ./src/mini-printf/mini-printf.c

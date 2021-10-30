@@ -7,3 +7,4 @@ Makefile.*
 *.efi
 arm
 u*.zip
+NvVars
