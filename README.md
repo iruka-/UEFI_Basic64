@@ -36,3 +36,4 @@ strings, arrays, etc, which are not natively supported in the BASIC implementati
 - Running the efi file sometimes gives a load error. I can run it and rerun it, but after resetting the VM, I get "Command Error Status: Load error". 
 The md5sum seems to be different before starting the VM and after closing it. Creating a backup file seems to fix it. The error occurs only after a hard reset
 or shutdown.
+- Add example screenshots
