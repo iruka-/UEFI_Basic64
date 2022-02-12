@@ -12,7 +12,7 @@ makefile, which can be downloaded [here](https://github.com/BlankOn/ovmf-blobs).
 
 ## Screenshots
 
-![Start](screenshots/start.png)
+![Start](screenshots/start.PNG)
 ![FizzBuzz](screenshots/fizzbuzz.png)
 
 ## Usage
