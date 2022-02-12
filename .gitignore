@@ -8,3 +8,5 @@ Makefile.*
 arm
 u*.zip
 NvVars
+bios.bin
+bios64.bin
