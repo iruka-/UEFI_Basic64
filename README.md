@@ -23,12 +23,17 @@ All variables are a single letter and are `short`s (signed integers, and 16-bit 
 The addresses are indexes in a C array. Negative addresses can be used as they will simply be converted to their 2's complement, accessing higher memory than the
 positive addresses. POKE takes an argument of a 8-bit integer and PEEK returns an 8-bit integer. PEEK and POKE can both be used to access memory for purposes such as 
 strings, arrays, etc, which are not natively supported in the BASIC implementation.
-## TODO:
-Running the efi file sometimes gives a load error. I can run it and rerun it, but after resetting the VM, I get "Command Error Status: Load error". 
+
+## Roadmap
+### Done
+- Create a working UEFI Basic
+- Create initial release
+### Not done
+- New release (with new Basic version)
+- Add file saving
+- Remove commented out lines
+- Test out desktop mode
+- Running the efi file sometimes gives a load error. I can run it and rerun it, but after resetting the VM, I get "Command Error Status: Load error". 
 The md5sum seems to be different before starting the VM and after closing it. Creating a backup file seems to fix it. The error occurs only after a hard reset
 or shutdown.
-
-Remove commented out lines
-
-Add printing and reading char functions to UEFI mode and not just desktop
-
+- Add example screenshots
