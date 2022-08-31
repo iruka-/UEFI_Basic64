@@ -11,3 +11,7 @@ NvVars
 bios.bin
 bios64.bin
 bios*.bin
+1
+2
+*~
+err

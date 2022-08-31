@@ -1,52 +1,106 @@
 # UEFI Basic
+
 A simple BASIC language intepreter that runs on UEFI. Feel free to submit a pull request.
 
-## Requirements
-The gcc compiler for x86\_64 mingw platform (x86\_64-w64-mingw32-gcc, this can be found in the Debian package mingw-w64).
+これは、UEFI BOOTする、64bit整数版 TinyBASICインタープリターです。
 
-## Compilation
-Running `make` will produce an EFI file and a bootable ISO for the x86\_64 architechture.
+オリジナル版は、68000 Tiny BASIC です。
 
-Running `make qemu` will run the QEMU emulator. It is required for `bios64.bin` to be in the same directory as the
-makefile, which can be downloaded [here](https://github.com/BlankOn/ovmf-blobs).
 
-## Screenshots
+## オリジナル Git Repository からの大きな変更点
 
-![Start](screenshots/start.PNG)
-![FizzBuzz](screenshots/fizzbuzz.png)
+・UEFI BOOT と 64bit Linux gcc (CUI) 以外の動作環境の切り捨て
 
-## Usage
-Programs need to be typed in with line numbers. To run use the `run` command, and to create a new program use the `new` command. `list` prints out the current program.
+・予約語を普通の文字列型に変更
 
-## Credits
-Credit to [gnu-efi](https://github.com/vathpela/gnu-efi), TinyBasicPlus, and EDK2.
+・整数のビット数を16bitから64bitに変更
 
-Licenses for each can be found in the LICENSE.* files.
+・多少の Refactoring を実施
 
-## Downloads
-UEFI bootable ISO files can be found on the [releases page](https://github.com/logern5/UEFI_Basic/releases).
+## 環境構築メモ
 
-## Language info
-The version of BASIC used in this project is a C version of TinyBASIC, a highly portable BASIC interpreter which only depends on a couple external functions for IO.
-A list of all the commands and functions can be located [here](src/ubasic/README.md). This version of BASIC included runs on desktop operating systems, UEFI, and
-Arduino. The BASIC interpreter is based on an interpreter for the Motorola 68000, but the code is messy with a lot of `goto` statements. I switched to the TinyBASIC interpreter from uBASIC because the TinyBASIC didn't require so many external library functions.
+(1)・Lubuntu22.04 を用意（普通のUbuntu22.04でも良い） QEMUを動かすので、GUIが必要。
 
-All variables are a single letter and are `short`s (signed integers, and 16-bit on most implementations). Memory ddresses for the PEEK and POKE commands are also `short`s.
-The addresses are indexes in a C array. Negative addresses can be used as they will simply be converted to their 2's complement, accessing higher memory than the
-positive addresses. POKE takes an argument of a 8-bit integer and PEEK returns an 8-bit integer. PEEK and POKE can both be used to access memory for purposes such as 
-strings, arrays, etc, which are not natively supported in the BASIC implementation.
+(2)・QEMUを入れる。・・・UEFIブートを試すエミュレータ。
 
-## Roadmap
-### Done
-- Create a working UEFI Basic
-- Create initial release
-- Add example screenshots
-- New release (with new Basic version)
+ ```
+ # apt install qemu-system-x86
+ ```
 
-### Not Done
-- Add file saving
-- Remove commented out lines
-- Test out desktop mode
-- Running the efi file sometimes gives a load error. I can run it and rerun it, but after resetting the VM, I get "Command Error Status: Load error". 
-The md5sum seems to be different before starting the VM and after closing it. Creating a backup file seems to fix it. The error occurs only after a hard reset
-or shutdown.
+(3)・OVMFを入れる。・・・UEFIのBIOS（変な言い方だが、そう）というかファームウェアね。 Open Virtual Machine Firmware とかそんな感じの。
+
+ ```
+ # apt install ovmf
+ ```
+
+(4)・mingw-x64を入れる。・・・元はWindows用のgccなんだけど、UEFIから起動する実行ファイルは PE32+形式なので、それを吐けるコンパイラが必要。
+
+ ```
+ # apt install mingw-w64
+ ```
+
+たぶんこれだけでいいはず。
+
+
+## QEMU上で動かす
+
+・make uefi すると、BOOTX64.EFIが出来るので、それをQEMUに食わせる。
+
+ ```
+ $ qemu-system-x86_64 -bios OVMF.fd -drive file=fat:rw:fs
+ ```
+
+・実行するまえに、BOOTX64.EFIをカレントディレクトリの fs以下に配置する。
+ ```
+ fs/EFI/BOOT/BOOTX64.EFI
+ ```
+
+## Ubuntu 上で動かす( GUI 不要 )
+
+・makeして、出来た ELF ( ./basic ) をコマンドラインから実行する。
+
+ ```
+ $ make
+ $ ./basic
+ ```
+
+・終了は 「bye」
+
+・エラー発生時の行番号は、BASICの行ではなく、 basic.c のエラー発生時の行番号であることに注意
+
+・変数は A-Zしか使用できない。
+
+・文字列変数はない。
+
+・整数は64bit
+
+・配列は実装されない。
+
+・Arduino等にあるような　SD Card File I/O や Port Pin Control など、は実装されない。
+
+## 注意事項
+
+・Linuxコマンドラインでは libcの関数が使用可能だが、UEFIビルドではリンクエラーするので注意。
+
+## 実機で動くのか？
+
+ちなみに、てきとーなUSBメモリーをFAT32フォーマットして、
+
+USBドライブ名: /EFI/BOOT/BOOTX64.EFI
+
+のようにさっきのファイルを配置して、
+
+C:ドライブだったSSDを抜いておいて起動すると、ちゃんとBASICが起動する。
+
+
+だけど、メーカーロゴが残ったままだし、全画面じゃないし（中央部分にしかコンソールがprintしない）不満が・・・
+
+
+## 感想：ひとりごと
+
+うーん、なんだろう。PIC32MXでBASIC動かしたときもそうだったんだけど。
+まともなBASICインタプリタって、どっかに置いてくれないですかね。
+バグバグやん。
+
+
+こいつ、files とか loadとかsaveがない。なんも出来ん。
